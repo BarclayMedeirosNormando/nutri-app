@@ -81,7 +81,12 @@ class _PlanosScreenState extends State<PlanosScreen> {
   /// Abre o editor e, ao voltar, recarrega a lista (resumos atualizados).
   Future<void> _abrir(Plano p) async {
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => PlanoEditorScreen(planoId: p.id)),
+      MaterialPageRoute<void>(
+        builder: (_) => PlanoEditorScreen(
+          planoId: p.id,
+          nomePaciente: widget.paciente.nome,
+        ),
+      ),
     );
     if (mounted) _carregar();
   }

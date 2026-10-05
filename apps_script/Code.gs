@@ -4,7 +4,7 @@
  * Login, token e dados entram nos próximos passos.
  */
 
-const VERSION = '0.5.0';
+const VERSION = '0.6.0';
 
 const TOKEN_TTL_SEC = 8 * 3600;   // validade do token: 8 horas
 const MAX_FAILS = 5;              // tentativas erradas antes de bloquear
@@ -55,6 +55,10 @@ function doPost(e) {
         return json_({ status: 'success', data: deleteMedidaCaseira_(req) });
       case 'saveAlimento':
         return json_({ status: 'success', data: saveAlimento_(req) });
+      case 'getConfig':
+        return json_({ status: 'success', data: getConfig_(req) });
+      case 'saveConfig':
+        return json_({ status: 'success', data: saveConfig_(req) });
       default:
         return json_({ status: 'error', code: 'unknown_action' });
     }
@@ -890,5 +894,40 @@ function deletePlano_(req) {
     audit_(USER_LABEL, 'apagar_plano', SHEET_PLANOS, id,
       'refeicoes=' + refs.length + ',itens=' + itens.length);
     return { apagado: true };
+  });
+}
+
+/* ===================== Configurações da profissional ===================== */
+
+const CONFIG_CAMPOS = [
+  { campo: 'nome', chave: 'PROF_NOME', max: 120 },
+  { campo: 'crn', chave: 'PROF_CRN', max: 40 },
+  { campo: 'contato', chave: 'PROF_CONTATO', max: 120 }
+];
+
+/** Dados da profissional que saem no cabeçalho do PDF (guardados nas propriedades do script). */
+function getConfig_(req) {
+  auth_(req);
+  const p = props_();
+  const cfg = {};
+  CONFIG_CAMPOS.forEach(function (c) { cfg[c.campo] = p.getProperty(c.chave) || ''; });
+  return { config: cfg };
+}
+
+/** Entrada: { config: { nome, crn, contato } } */
+function saveConfig_(req) {
+  auth_(req);
+  const e = req.config || {};
+  const novo = {};
+  CONFIG_CAMPOS.forEach(function (c) { novo[c.campo] = str_(e[c.campo], c.max, c.campo); });
+  return withLock_(function () {
+    const p = props_();
+    const mudou = [];
+    CONFIG_CAMPOS.forEach(function (c) {
+      if ((p.getProperty(c.chave) || '') !== novo[c.campo]) mudou.push(c.campo);
+      if (novo[c.campo]) p.setProperty(c.chave, novo[c.campo]); else p.deleteProperty(c.chave);
+    });
+    audit_(USER_LABEL, 'editar_configuracao', '', '', mudou.join(','));
+    return { config: novo };
   });
 }

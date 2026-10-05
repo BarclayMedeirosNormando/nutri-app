@@ -28,6 +28,8 @@ const _campos = {
   'data_fim': 'Data de fim',
   'meta_kcal': 'Meta de calorias',
   'status': 'Status',
+  'crn': 'CRN',
+  'contato': 'Contato',
 };
 
 /// Única função que transforma erros em texto para o usuário.

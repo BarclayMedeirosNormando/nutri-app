@@ -7,6 +7,7 @@ import '../utils/friendly_error.dart';
 import '../utils/session.dart';
 import '../widgets/paciente_form.dart';
 import 'alimentos_screen.dart';
+import 'configuracoes_screen.dart';
 import 'planos_screen.dart';
 
 /// Lista de pacientes. Em tela larga (computador/tablet) mostra a lista e o
@@ -237,6 +238,13 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.restaurant_menu),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const AlimentosScreen()),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Configurações',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ConfiguracoesScreen()),
             ),
           ),
           IconButton(

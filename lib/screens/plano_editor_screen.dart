@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import '../models/alimento.dart';
 import '../models/plano.dart';
 import '../services/alimento_repositorio.dart';
+import '../services/config_service.dart';
+import '../services/pdf_plano.dart';
 import '../services/plano_service.dart';
+import '../utils/baixar_arquivo.dart';
 import '../utils/calculo_nutricional.dart';
 import '../utils/datas.dart';
 import '../utils/formato.dart';
@@ -19,9 +22,14 @@ import '../widgets/totais_bar.dart';
 /// Editor do plano alimentar: refeições, alimentos e totais em tempo real.
 /// Nada é gravado até tocar em "Salvar"; ao sair com alterações pede confirmação.
 class PlanoEditorScreen extends StatefulWidget {
-  const PlanoEditorScreen({super.key, required this.planoId});
+  const PlanoEditorScreen({
+    super.key,
+    required this.planoId,
+    this.nomePaciente = '',
+  });
 
   final String planoId;
+  final String nomePaciente;
 
   @override
   State<PlanoEditorScreen> createState() => _PlanoEditorScreenState();
@@ -45,6 +53,7 @@ class _PlanoEditorScreenState extends State<PlanoEditorScreen> {
 
   bool _carregando = true;
   bool _salvando = false;
+  bool _gerandoPdf = false;
   bool _descartar = false;
   String? _erro;
 
@@ -189,6 +198,39 @@ class _PlanoEditorScreenState extends State<PlanoEditorScreen> {
       if (mounted) _erroApi(e);
     } finally {
       if (mounted) setState(() => _salvando = false);
+    }
+  }
+
+  Future<void> _gerarPdf() async {
+    final p = _plano;
+    if (p == null || _gerandoPdf) return;
+    if (_sujo) {
+      _msg('Salve o plano antes de gerar o PDF.');
+      return;
+    }
+    if (p.refeicoes.isEmpty) {
+      _msg('Adicione ao menos uma refeição ao plano.');
+      return;
+    }
+    setState(() => _gerandoPdf = true);
+    try {
+      final cfg = await ConfigService.obter();
+      final bytes = await gerarPdfPlano(
+        plano: p,
+        nomePaciente: widget.nomePaciente,
+        alimentos: _alimentos,
+        medidas: _medidas,
+        config: cfg,
+      );
+      baixarArquivo(bytes, nomeArquivoPdf(p, widget.nomePaciente), 'application/pdf');
+      if (!mounted) return;
+      _msg(cfg.nome.isEmpty
+          ? 'PDF gerado. Dica: preencha seus dados em Configurações para sair no cabeçalho.'
+          : 'PDF gerado.');
+    } catch (e) {
+      if (mounted) _erroApi(e);
+    } finally {
+      if (mounted) setState(() => _gerandoPdf = false);
     }
   }
 
@@ -582,6 +624,11 @@ class _PlanoEditorScreenState extends State<PlanoEditorScreen> {
             overflow: TextOverflow.ellipsis,
           ),
           actions: [
+            IconButton(
+              tooltip: 'Gerar PDF',
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              onPressed: (p == null || _gerandoPdf) ? null : _gerarPdf,
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 12),
               child: FilledButton.icon(
