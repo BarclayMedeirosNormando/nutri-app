@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(child: Text('Login realizado com sucesso.')),
+      body: const Center(child: Text('Login realizado com sucesso (v2).')),
     );
   }
 }
