@@ -8,6 +8,26 @@ const _campos = {
   'email': 'E-mail',
   'objetivo': 'Objetivo',
   'observacoes': 'Observações',
+  'categoria': 'Categoria',
+  'energia_kcal': 'Energia',
+  'proteina_g': 'Proteína',
+  'lipidios_g': 'Lipídios',
+  'carboidrato_g': 'Carboidrato',
+  'fibra_g': 'Fibra',
+  'sodio_mg': 'Sódio',
+  'descricao': 'Descrição',
+  'gramas': 'Gramas',
+  'alimento_id': 'Alimento',
+  'medida_caseira_id': 'Medida caseira',
+  'quantidade': 'Quantidade',
+  'horario': 'Horário',
+  'refeicao_nome': 'Nome da refeição',
+  'refeicoes': 'Refeições',
+  'itens': 'Itens',
+  'data_inicio': 'Data de início',
+  'data_fim': 'Data de fim',
+  'meta_kcal': 'Meta de calorias',
+  'status': 'Status',
 };
 
 /// Única função que transforma erros em texto para o usuário.
@@ -41,6 +61,12 @@ String friendlyError(Object error) {
             : 'Verifique o campo "$campo".';
       case 'not_found':
         return 'Registro não encontrado. Atualize a lista.';
+      case 'in_use':
+        return 'Este registro está em uso e não pode ser apagado.';
+      case 'forbidden':
+        return 'Esta ação não é permitida para este registro.';
+      case 'duplicate':
+        return 'Já existe um registro igual.';
     }
   }
   return 'Não foi possível concluir. Tente novamente em instantes.';
