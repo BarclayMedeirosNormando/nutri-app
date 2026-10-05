@@ -7,6 +7,7 @@ import '../utils/datas.dart';
 import '../utils/friendly_error.dart';
 import '../utils/numeros.dart';
 import '../utils/session.dart';
+import 'plano_editor_screen.dart';
 
 /// Planos alimentares de um paciente.
 class PlanosScreen extends StatefulWidget {
@@ -71,9 +72,18 @@ class _PlanosScreenState extends State<PlanosScreen> {
       if (!mounted) return;
       salvo.totalRefeicoes = salvo.refeicoes.length;
       setState(() => _planos.insert(0, salvo));
+      await _abrir(salvo);
     } catch (e) {
       if (mounted) _avisar(e);
     }
+  }
+
+  /// Abre o editor e, ao voltar, recarrega a lista (resumos atualizados).
+  Future<void> _abrir(Plano p) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => PlanoEditorScreen(planoId: p.id)),
+    );
+    if (mounted) _carregar();
   }
 
   Future<void> _apagar(Plano p) async {
@@ -170,13 +180,7 @@ class _PlanosScreenState extends State<PlanosScreen> {
                 ),
             ],
           ),
-          onTap: () {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(const SnackBar(
-                content: Text('O editor do plano chega na próxima etapa.'),
-              ));
-          },
+          onTap: () => _abrir(p),
         );
       },
     );

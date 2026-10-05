@@ -22,6 +22,21 @@ String? brParaIso(String br) {
   return '${m[3]}-${m[2]}-${m[1]}';
 }
 
+/// 'dd/mm/aaaa' -> 'aaaa-mm-dd', aceitando qualquer data válida (inclusive futura).
+/// Devolve '' se vazio e null se inválida.
+String? brParaIsoLivre(String br) {
+  final t = br.trim();
+  if (t.isEmpty) return '';
+  final m = RegExp(r'^(\d{2})/(\d{2})/(\d{4})$').firstMatch(t);
+  if (m == null) return null;
+  final d = int.parse(m[1]!);
+  final mo = int.parse(m[2]!);
+  final y = int.parse(m[3]!);
+  final dt = DateTime(y, mo, d);
+  if (dt.year != y || dt.month != mo || dt.day != d) return null;
+  return '${m[3]}-${m[2]}-${m[1]}';
+}
+
 /// Idade em anos a partir de 'aaaa-mm-dd' (null se não houver data válida).
 int? idadeDe(String iso) {
   final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(iso);
