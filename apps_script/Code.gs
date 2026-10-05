@@ -4,7 +4,7 @@
  * Login, token e dados entram nos próximos passos.
  */
 
-const VERSION = '0.3.1';
+const VERSION = '0.4.0';
 
 const TOKEN_TTL_SEC = 8 * 3600;   // validade do token: 8 horas
 const MAX_FAILS = 5;              // tentativas erradas antes de bloquear
@@ -31,6 +31,8 @@ function doPost(e) {
         return json_({ status: 'success', data: login_(req) });
       case 'me':
         return json_({ status: 'success', data: { usuario: auth_(req).sub } });
+      case 'listAlimentos':
+        return json_({ status: 'success', data: listAlimentos_(req) });
       case 'listPacientes':
         return json_({ status: 'success', data: listPacientes_(req) });
       case 'savePaciente':
@@ -386,4 +388,40 @@ function zerarDadosDeTeste() {
     const sh = ss.getSheetByName(nome);
     if (sh && sh.getLastRow() > 1) sh.deleteRows(2, sh.getLastRow() - 1);
   });
+}
+
+/* ===================== Alimentos ===================== */
+
+/** Converte célula numérica (número, texto com vírgula ou vazio) em número ou null. */
+function num_(v) {
+  if (typeof v === 'number') return v;
+  const s = String(v == null ? '' : v).trim();
+  if (!s) return null;
+  const n = Number(s.replace(',', '.'));
+  return isNaN(n) ? null : n;
+}
+
+/**
+ * Devolve a tabela de alimentos inteira numa única chamada (o app guarda em
+ * memória e no aparelho e faz os cálculos localmente). Valores em branco = null.
+ */
+function listAlimentos_(req) {
+  auth_(req);
+  const lista = readRows_('alimentos')
+    .filter(function (r) { return r.id; })
+    .map(function (r) {
+      return {
+        id: String(r.id),
+        origem: String(r.origem || ''),
+        nome: String(r.nome || ''),
+        categoria: String(r.categoria || ''),
+        energia_kcal: num_(r.energia_kcal),
+        proteina_g: num_(r.proteina_g),
+        lipidios_g: num_(r.lipidios_g),
+        carboidrato_g: num_(r.carboidrato_g),
+        fibra_g: num_(r.fibra_g),
+        sodio_mg: num_(r.sodio_mg)
+      };
+    });
+  return { alimentos: lista };
 }

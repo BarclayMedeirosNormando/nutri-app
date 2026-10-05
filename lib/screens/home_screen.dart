@@ -6,6 +6,7 @@ import '../utils/datas.dart';
 import '../utils/friendly_error.dart';
 import '../utils/session.dart';
 import '../widgets/paciente_form.dart';
+import 'alimentos_screen.dart';
 
 /// Lista de pacientes. Em tela larga (computador/tablet) mostra a lista e o
 /// formulário lado a lado; no celular o formulário abre em tela cheia.
@@ -221,6 +222,13 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Pacientes'),
         actions: [
+          IconButton(
+            tooltip: 'Alimentos',
+            icon: const Icon(Icons.restaurant_menu),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const AlimentosScreen()),
+            ),
+          ),
           IconButton(
             tooltip: 'Atualizar',
             icon: const Icon(Icons.refresh),
