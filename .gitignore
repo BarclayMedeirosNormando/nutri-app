@@ -56,3 +56,5 @@ backups/
 .claspignore
 credentials*.json
 *.pdf
+env.json
+Claude outputs/

@@ -1,12 +1,15 @@
 {
-    "name": "nutri_app",
-    "short_name": "nutri_app",
-    "start_url": ".",
+    "id": "./",
+    "name": "Nutri App",
+    "short_name": "Nutri App",
+    "start_url": "./",
+    "scope": "./",
+    "lang": "pt-BR",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#FFFFFF",
+    "theme_color": "#009688",
+    "description": "Gestão nutricional.",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {
