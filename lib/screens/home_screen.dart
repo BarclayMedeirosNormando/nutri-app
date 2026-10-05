@@ -7,6 +7,7 @@ import '../utils/friendly_error.dart';
 import '../utils/session.dart';
 import '../widgets/paciente_form.dart';
 import 'alimentos_screen.dart';
+import 'planos_screen.dart';
 
 /// Lista de pacientes. Em tela larga (computador/tablet) mostra a lista e o
 /// formulário lado a lado; no celular o formulário abre em tela cheia.
@@ -186,6 +187,15 @@ class _HomeScreenState extends State<HomeScreen> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              IconButton(
+                tooltip: 'Planos alimentares',
+                icon: const Icon(Icons.assignment_outlined),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => PlanosScreen(paciente: p),
+                  ),
+                ),
+              ),
               if (!p.ativo)
                 Text('Arquivado', style: Theme.of(context).textTheme.bodySmall),
               if (!p.temConsentimento)
