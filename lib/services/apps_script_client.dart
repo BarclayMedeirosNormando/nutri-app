@@ -7,7 +7,8 @@ import 'package:http/http.dart' as http;
 /// 'network'). A tradução para o usuário fica em friendlyError().
 class ApiException implements Exception {
   final String code;
-  const ApiException(this.code);
+  final String field;
+  const ApiException(this.code, [this.field = '']);
 
   @override
   String toString() => 'ApiException($code)';
@@ -62,7 +63,10 @@ class AppsScriptClient {
     }
 
     if (json['status'] != 'success') {
-      throw ApiException((json['code'] as String?) ?? 'server_error');
+      throw ApiException(
+        (json['code'] as String?) ?? 'server_error',
+        (json['field'] as String?) ?? '',
+      );
     }
     return json['data'];
   }

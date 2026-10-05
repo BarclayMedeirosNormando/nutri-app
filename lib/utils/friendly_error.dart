@@ -1,5 +1,15 @@
 import '../services/apps_script_client.dart';
 
+const _campos = {
+  'nome': 'Nome',
+  'data_nascimento': 'Data de nascimento',
+  'sexo': 'Sexo',
+  'telefone': 'Telefone',
+  'email': 'E-mail',
+  'objetivo': 'Objetivo',
+  'observacoes': 'Observações',
+};
+
 /// Única função que transforma erros em texto para o usuário.
 /// Nunca mostra a exceção crua nem o endereço do backend.
 String friendlyError(Object error) {
@@ -24,6 +34,13 @@ String friendlyError(Object error) {
         return 'A senha deve ter pelo menos 10 caracteres.';
       case 'not_configured_app':
         return 'O aplicativo não está configurado corretamente.';
+      case 'invalid_data':
+        final campo = _campos[error.field];
+        return campo == null
+            ? 'Verifique os dados informados.'
+            : 'Verifique o campo "$campo".';
+      case 'not_found':
+        return 'Registro não encontrado. Atualize a lista.';
     }
   }
   return 'Não foi possível concluir. Tente novamente em instantes.';
